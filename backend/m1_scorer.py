@@ -17,9 +17,11 @@ import config as C
 
 logger = logging.getLogger(__name__)
 
-MODEL_DIR = pathlib.Path(__file__).parent.parent / "ml" / "models"
-M1_MODEL_PATH  = MODEL_DIR / "m1_isolation_forest.pkl"
-M1_SCALER_PATH = MODEL_DIR / "m1_scaler.pkl"
+MODEL_DIR_BACKEND = pathlib.Path(__file__).parent / "models"
+MODEL_DIR_ML = pathlib.Path(__file__).parent.parent / "ml" / "models"
+
+M1_MODEL_PATH = MODEL_DIR_BACKEND / "m1_isolation_forest.pkl" if (MODEL_DIR_BACKEND / "m1_isolation_forest.pkl").exists() else MODEL_DIR_ML / "m1_isolation_forest.pkl"
+M1_SCALER_PATH = MODEL_DIR_BACKEND / "m1_scaler.pkl" if (MODEL_DIR_BACKEND / "m1_scaler.pkl").exists() else MODEL_DIR_ML / "m1_scaler.pkl"
 
 _model = None
 _scaler = None

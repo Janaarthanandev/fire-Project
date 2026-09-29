@@ -21,9 +21,11 @@ sys.path.append(str(BASE_DIR / "backend"))
 from supabase_client import get_client
 import config as C
 
-MODEL_DIR = BASE_DIR / "ml" / "models"
-RF_MODEL_PATH = MODEL_DIR / "m2_random_forest.pkl"
-SCALER_PATH   = MODEL_DIR / "m2_scaler.pkl"
+MODEL_DIR_BACKEND = pathlib.Path(__file__).parent / "models"
+MODEL_DIR_ML = BASE_DIR / "ml" / "models"
+
+RF_MODEL_PATH = MODEL_DIR_BACKEND / "m2_random_forest.pkl" if (MODEL_DIR_BACKEND / "m2_random_forest.pkl").exists() else MODEL_DIR_ML / "m2_random_forest.pkl"
+SCALER_PATH   = MODEL_DIR_BACKEND / "m2_scaler.pkl" if (MODEL_DIR_BACKEND / "m2_scaler.pkl").exists() else MODEL_DIR_ML / "m2_scaler.pkl"
 
 _model = None
 _scaler = None
