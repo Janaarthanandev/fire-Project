@@ -209,15 +209,15 @@ export default function LandingSensorGrid({ readings, currentState }) {
         </div>
       </div>
 
-      {/* ── ROW 4: SYSTEM OPERATIONAL STATE BANNER WITH TRIGGER SOURCE BREAKDOWN ── */}
+      {/* ── ROW 4: SYSTEM OPERATIONAL STATE BANNER ── */}
       <div className={`system-state-banner state-banner-${stateStr.toLowerCase()}`}>
-        <div className="banner-top flex-between">
-          <div className="banner-left">
+        <div className="banner-inner flex-between">
+          <div className="banner-left flex-align">
             <div className="state-badge-icon">
               {stateStr === 'CRITICAL' ? '🚨' : stateStr === 'MODERATE' ? '⚠️' : '🛡️'}
             </div>
             <div>
-              <div className="banner-small-label">Overall System Operational State</div>
+              <div className="banner-small-label font-mono">OVERALL SYSTEM OPERATIONAL STATE</div>
               <div className="banner-state-title">STATE: {stateStr}</div>
               <div className="banner-state-desc">
                 {stateStr === 'CRITICAL'
@@ -235,22 +235,30 @@ export default function LandingSensorGrid({ readings, currentState }) {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* ── SUB-TAB: TRIGGER REASON & ROOT CAUSE ANALYSIS BREAKDOWN ── */}
-        <div className="trigger-analysis-tab">
-          <div className="trigger-tab-header">
-            <span className="trigger-tab-title font-mono">🔍 STATE TRIGGER SOURCE & ROOT CAUSE BREAKDOWN</span>
-            <span className="trigger-count-pill font-mono">{triggerReasons.length} Active Indicator{triggerReasons.length > 1 ? 's' : ''}</span>
+      {/* ── ROW 5: DEDICATED ROOT CAUSE & TRIGGER SOURCE ANALYSIS CARD ── */}
+      <div className="card-glass trigger-analysis-card">
+        <div className="trigger-card-header flex-between">
+          <div className="trigger-card-title flex-align">
+            <span className="title-icon">🔍</span>
+            <span>Root Cause & State Trigger Source Analysis</span>
           </div>
-          <div className="trigger-badges-flex">
-            {triggerReasons.map((tr, idx) => (
-              <div key={idx} className={`trigger-source-pill pill-${tr.severity}`}>
-                <span className="tr-icon">{tr.icon}</span>
-                <span className="tr-label">{tr.label}:</span>
-                <span className="tr-val font-mono">{tr.value}</span>
+          <div className="trigger-count-badge font-mono">
+            {triggerReasons.length} Active Indicator{triggerReasons.length > 1 ? 's' : ''}
+          </div>
+        </div>
+
+        <div className="trigger-items-grid">
+          {triggerReasons.map((tr, idx) => (
+            <div key={idx} className={`trigger-item-box item-${tr.severity}`}>
+              <div className="trigger-item-header flex-align">
+                <span className="trigger-item-icon">{tr.icon}</span>
+                <span className="trigger-item-label">{tr.label}</span>
               </div>
-            ))}
-          </div>
+              <div className="trigger-item-val font-mono">{tr.value}</div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
