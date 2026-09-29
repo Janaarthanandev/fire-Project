@@ -19,9 +19,16 @@ export default function MlInferencePanel({ readings, currentState }) {
   const flameVal = Number(readings?.flame_val ?? 0)
   const flameDetected = flameVal > 0.5
 
-  // ── MODEL 1: Isolation Forest Pre-Ignition Risk Scorer ──
+  // ── 1. CLOUD ML DATA PRIORITY (Read exact values logged to Supabase) ──
+  const cloudM1Score = readings?.m1_risk_score ?? readings?.risk_score
+  const cloudM2Conf = readings?.m2_confidence ?? readings?.confidence
+  const cloudAnomaly = readings?.anomaly_score_raw ?? readings?.raw_anomaly
+
+  // ── 2. MODEL 1: Isolation Forest Pre-Ignition Risk Scorer ──
   let m1Score = 14
-  if (flameDetected || maxTemp >= 60.0 || mq2 >= 500) {
+  if (cloudM1Score !== undefined && cloudM1Score !== null && !isNaN(Number(cloudM1Score))) {
+    m1Score = Math.round(Number(cloudM1Score))
+  } else if (flameDetected || maxTemp >= 60.0 || mq2 >= 500) {
     m1Score = Math.min(98, Math.round(84 + (maxTemp - 60.0) * 0.4 + (mq2 - 500) * 0.02 + (flameDetected ? 8 : 0)))
   } else if (maxTemp >= 45.0 || mq2 >= 300) {
     m1Score = Math.min(74, Math.round(50 + (maxTemp - 45.0) * 1.5 + (mq2 - 300) * 0.08))
@@ -30,12 +37,20 @@ export default function MlInferencePanel({ readings, currentState }) {
     const gasContrib = Math.max(0, (mq2 - 150) * 0.04)
     m1Score = Math.min(42, Math.round(12 + tempContrib + gasContrib))
   }
-  m1Score = Math.max(8, Math.min(99, m1Score))
-  const m1AnomalyRaw = (m1Score / 100.0 - 0.5).toFixed(3)
+  m1Score = Math.max(0, Math.min(100, m1Score))
 
-  // ── MODEL 2: Random Forest Multi-Sensor Fire Confidence Engine ──
+  let m1AnomalyRaw = '-0.200'
+  if (cloudAnomaly !== undefined && cloudAnomaly !== null && !isNaN(Number(cloudAnomaly))) {
+    m1AnomalyRaw = Number(cloudAnomaly).toFixed(3)
+  } else {
+    m1AnomalyRaw = (m1Score / 100.0 - 0.5).toFixed(3)
+  }
+
+  // ── 3. MODEL 2: Random Forest Multi-Sensor Fire Confidence Engine ──
   let m2Confidence = 3.5
-  if (flameDetected || (maxTemp >= 60.0 && mq2 >= 400)) {
+  if (cloudM2Conf !== undefined && cloudM2Conf !== null && !isNaN(Number(cloudM2Conf))) {
+    m2Confidence = Number(Number(cloudM2Conf).toFixed(1))
+  } else if (flameDetected || (maxTemp >= 60.0 && mq2 >= 400)) {
     m2Confidence = Math.min(99.4, Number((92.0 + (maxTemp - 60.0) * 0.3 + (flameDetected ? 5.0 : 0)).toFixed(1)))
   } else if (maxTemp >= 48.0 || mq2 >= 350) {
     m2Confidence = Math.min(74.0, Number((42.0 + (maxTemp - 48.0) * 2.0).toFixed(1)))
@@ -44,7 +59,7 @@ export default function MlInferencePanel({ readings, currentState }) {
   } else {
     m2Confidence = Math.min(12.0, Number((2.5 + (maxTemp - 30.0) * 0.3 + (mq2 - 150) * 0.02).toFixed(1)))
   }
-  m2Confidence = Math.max(1.0, Math.min(99.9, m2Confidence))
+  m2Confidence = Math.max(0.0, Math.min(100.0, m2Confidence))
 
   return (
     <div className="ml-inference-section-wrapper">

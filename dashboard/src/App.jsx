@@ -25,14 +25,41 @@ export default function App() {
   // Fetch last 50 telemetry rows from Supabase & subscribe to real-time inserts
   const fetchCloudHistory = async () => {
     try {
-      const { data } = await supabase
+      const { data: readingsData } = await supabase
         .from('sensor_readings')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(50)
 
-      if (data && data.length > 0) {
-        setLiveHistory(data)
+      const { data: riskData } = await supabase
+        .from('risk_scores')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(1)
+
+      const { data: fireData } = await supabase
+        .from('fire_events')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(1)
+
+      if (readingsData && readingsData.length > 0) {
+        const latestRisk = riskData && riskData[0] ? riskData[0] : null
+        const latestFire = fireData && fireData[0] ? fireData[0] : null
+
+        const mergedHistory = readingsData.map((row, idx) => {
+          if (idx === 0) {
+            return {
+              ...row,
+              risk_score: row.m1_risk_score ?? row.risk_score ?? latestRisk?.risk_score,
+              anomaly_score_raw: row.anomaly_score_raw ?? latestRisk?.anomaly_score_raw,
+              m2_confidence: row.m2_confidence ?? row.confidence ?? latestFire?.confidence,
+            }
+          }
+          return row
+        })
+
+        setLiveHistory(mergedHistory)
         setConnected(true)
       } else {
         setConnected(false)
@@ -54,6 +81,7 @@ export default function App() {
           if (payload.new) {
             setLiveHistory(prev => [payload.new, ...prev].slice(0, 50))
             setConnected(true)
+            fetchCloudHistory()
           }
         }
       )
@@ -67,7 +95,7 @@ export default function App() {
     }
   }, [])
 
-  // Current latest reading from cloud stream
+  // Current latest reading from cloud stream (timestamp ordered)
   const latestReading = liveHistory[0] || {
     temp_z1: 31.2,
     temp_z2: 32.5,
@@ -94,8 +122,12 @@ export default function App() {
   const mq135Val = Number(latestReading.mq135_val ?? 142)
   const flameVal = Number(latestReading.flame_val ?? 0)
 
+  // Use Cloud DB state if available; otherwise fallback to live calculation
+  const cloudState = latestReading.system_state
   let currentState = 'NORMAL'
-  if (flameVal >= 0.5 || maxThermal >= 60.0 || mq2Val >= 500) {
+  if (cloudState && ['NORMAL', 'MODERATE', 'CRITICAL'].includes(cloudState)) {
+    currentState = cloudState
+  } else if (flameVal >= 0.5 || maxThermal >= 60.0 || mq2Val >= 500) {
     currentState = 'CRITICAL'
   } else if (maxThermal >= 45.0 || mq2Val >= 300 || mq135Val >= 250) {
     currentState = 'MODERATE'
