@@ -59,7 +59,7 @@ export default function App() {
       )
       .subscribe()
 
-    const interval = setInterval(fetchCloudHistory, 3000)
+    const interval = setInterval(fetchCloudHistory, 1000)
 
     return () => {
       supabase.removeChannel(channel)
@@ -84,7 +84,24 @@ export default function App() {
     system_state: 'NORMAL'
   }
 
-  const currentState = latestReading.system_state || 'NORMAL'
+  // Dynamic Hazard Evaluation from current sensor reading
+  const z1 = Number(latestReading.temp_z1 ?? 31.2)
+  const z2 = Number(latestReading.temp_z2 ?? 32.5)
+  const z3 = Number(latestReading.temp_z3 ?? 30.8)
+  const z4 = Number(latestReading.temp_z4 ?? 29.9)
+  const maxThermal = Math.max(z1, z2, z3, z4)
+  const mq2Val = Number(latestReading.mq2_val ?? 185)
+  const mq135Val = Number(latestReading.mq135_val ?? 142)
+  const flameVal = Number(latestReading.flame_val ?? 0)
+
+  let currentState = 'NORMAL'
+  if (flameVal >= 0.5 || maxThermal >= 60.0 || mq2Val >= 500) {
+    currentState = 'CRITICAL'
+  } else if (maxThermal >= 45.0 || mq2Val >= 300 || mq135Val >= 250) {
+    currentState = 'MODERATE'
+  } else {
+    currentState = 'NORMAL'
+  }
 
   const timeStr = clock.toLocaleTimeString('en-IN', {
     hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,

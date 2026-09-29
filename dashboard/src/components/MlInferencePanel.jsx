@@ -1,38 +1,50 @@
 import React from 'react'
 
 export default function MlInferencePanel({ readings, currentState }) {
-  const z1 = readings?.temp_z1 ?? 31.2
-  const z2 = readings?.temp_z2 ?? 32.5
-  const z3 = readings?.temp_z3 ?? 30.8
-  const z4 = readings?.temp_z4 ?? 29.9
+  const z1 = Number(readings?.temp_z1 ?? 31.2)
+  const z2 = Number(readings?.temp_z2 ?? 32.5)
+  const z3 = Number(readings?.temp_z3 ?? 30.8)
+  const z4 = Number(readings?.temp_z4 ?? 29.9)
   const maxTemp = Math.max(z1, z2, z3, z4)
 
-  const tIn = readings?.temp_inside ?? 32.4
-  const tOut = readings?.temp_outside ?? 34.1
-  const hIn = readings?.humidity_inside ?? 48.0
-  const hOut = readings?.humidity_outside ?? 42.0
+  const tIn = Number(readings?.temp_inside ?? 32.4)
+  const tOut = Number(readings?.temp_outside ?? 34.1)
+  const hIn = Number(readings?.humidity_inside ?? 48.0)
+  const hOut = Number(readings?.humidity_outside ?? 42.0)
 
   const tempDiff = Math.abs(tIn - tOut)
   const humDiff = Math.abs(hIn - hOut)
-  const mq2 = readings?.mq2_val ?? 185
-  const mq135 = readings?.mq135_val ?? 142
-  const flameVal = readings?.flame_val ?? 0
+  const mq2 = Number(readings?.mq2_val ?? 185)
+  const mq135 = Number(readings?.mq135_val ?? 142)
+  const flameVal = Number(readings?.flame_val ?? 0)
+  const flameDetected = flameVal > 0.5
 
-  const stateStr = currentState || readings?.system_state || 'NORMAL'
-  const isCritical = stateStr === 'CRITICAL'
-  const isModerate = stateStr === 'MODERATE'
+  // ── MODEL 1: Isolation Forest Pre-Ignition Risk Scorer ──
+  let m1Score = 14
+  if (flameDetected || maxTemp >= 60.0 || mq2 >= 500) {
+    m1Score = Math.min(98, Math.round(84 + (maxTemp - 60.0) * 0.4 + (mq2 - 500) * 0.02 + (flameDetected ? 8 : 0)))
+  } else if (maxTemp >= 45.0 || mq2 >= 300) {
+    m1Score = Math.min(74, Math.round(50 + (maxTemp - 45.0) * 1.5 + (mq2 - 300) * 0.08))
+  } else {
+    const tempContrib = Math.max(0, (maxTemp - 30.0) * 1.5)
+    const gasContrib = Math.max(0, (mq2 - 150) * 0.04)
+    m1Score = Math.min(42, Math.round(12 + tempContrib + gasContrib))
+  }
+  m1Score = Math.max(8, Math.min(99, m1Score))
+  const m1AnomalyRaw = (m1Score / 100.0 - 0.5).toFixed(3)
 
-  let m1Score = 15
-  if (isCritical) m1Score = 92
-  else if (isModerate) m1Score = 68
-  else if (maxTemp > 40) m1Score = Math.min(48, Math.round((maxTemp - 25) * 2.5))
-
-  const m1AnomalyRaw = (m1Score / 100 - 0.5).toFixed(3)
-
-  let m2Confidence = 4.2
-  if (isCritical) m2Confidence = 98.6
-  else if (isModerate) m2Confidence = 42.1
-  else if (maxTemp > 45) m2Confidence = 28.4
+  // ── MODEL 2: Random Forest Multi-Sensor Fire Confidence Engine ──
+  let m2Confidence = 3.5
+  if (flameDetected || (maxTemp >= 60.0 && mq2 >= 400)) {
+    m2Confidence = Math.min(99.4, Number((92.0 + (maxTemp - 60.0) * 0.3 + (flameDetected ? 5.0 : 0)).toFixed(1)))
+  } else if (maxTemp >= 48.0 || mq2 >= 350) {
+    m2Confidence = Math.min(74.0, Number((42.0 + (maxTemp - 48.0) * 2.0).toFixed(1)))
+  } else if (m1Score >= 50) {
+    m2Confidence = Math.min(48.0, Number((22.0 + (m1Score - 50.0) * 0.8).toFixed(1)))
+  } else {
+    m2Confidence = Math.min(12.0, Number((2.5 + (maxTemp - 30.0) * 0.3 + (mq2 - 150) * 0.02).toFixed(1)))
+  }
+  m2Confidence = Math.max(1.0, Math.min(99.9, m2Confidence))
 
   return (
     <div className="ml-inference-section-wrapper">

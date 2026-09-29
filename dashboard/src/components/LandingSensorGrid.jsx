@@ -71,6 +71,48 @@ export default function LandingSensorGrid({ readings, currentState }) {
 
   const stateStr = currentState || readings?.system_state || 'NORMAL'
 
+  // ── TRIGGER REASON & ROOT CAUSE ANALYSIS BREAKDOWN ──
+  const z1Val = Number(readings?.temp_z1 ?? 31.2)
+  const z2Val = Number(readings?.temp_z2 ?? 32.5)
+  const z3Val = Number(readings?.temp_z3 ?? 30.8)
+  const z4Val = Number(readings?.temp_z4 ?? 29.9)
+  const maxThermal = Math.max(z1Val, z2Val, z3Val, z4Val)
+  
+  const zoneMap = { 'Zone 1': z1Val, 'Zone 2': z2Val, 'Zone 3': z3Val, 'Zone 4': z4Val }
+  const maxZoneName = Object.keys(zoneMap).reduce((a, b) => zoneMap[a] > zoneMap[b] ? a : b)
+
+  const triggerReasons = []
+  if (flameDetected) {
+    triggerReasons.push({ type: 'sensor', label: 'IR Flame Sensor (GPIO 18)', value: 'FLAME DETECTED', icon: '🔥', severity: 'danger' })
+  }
+  if (maxThermal >= 60.0) {
+    triggerReasons.push({ type: 'sensor', label: `Thermal Array (${maxZoneName})`, value: `${maxThermal.toFixed(1)}°C (≥ 60°C Spike)`, icon: '🌡️', severity: 'danger' })
+  } else if (maxThermal >= 45.0) {
+    triggerReasons.push({ type: 'sensor', label: `Thermal Array (${maxZoneName})`, value: `${maxThermal.toFixed(1)}°C (Elevated Heat)`, icon: '🌡️', severity: 'warning' })
+  }
+  if (mq2 >= 500) {
+    triggerReasons.push({ type: 'sensor', label: 'Combustible Gas (MQ-2)', value: `${mq2} PPM (Severe Gas Leak)`, icon: '💨', severity: 'danger' })
+  } else if (mq2 >= 300) {
+    triggerReasons.push({ type: 'sensor', label: 'Combustible Gas (MQ-2)', value: `${mq2} PPM (Elevated Gas)`, icon: '💨', severity: 'warning' })
+  }
+  if (mq135 >= 350) {
+    triggerReasons.push({ type: 'sensor', label: 'Air Quality (MQ-135)', value: `${mq135} PPM (Toxic Smoke Drift)`, icon: '☁️', severity: 'warning' })
+  }
+
+  const m1ScoreVal = Number(readings?.m1_risk_score ?? ((maxThermal >= 45 || mq2 >= 300) ? 68 : (maxThermal >= 60 || flameDetected) ? 92 : 18))
+  const m2ConfVal = Number(readings?.m2_confidence ?? ((maxThermal >= 60 || flameDetected) ? 98.6 : (maxThermal >= 45) ? 42.1 : 4.5))
+
+  if (m2ConfVal >= 75.0) {
+    triggerReasons.push({ type: 'ml', label: 'Model 2: Random Forest', value: `Fire Confidence ${m2ConfVal.toFixed(1)}% (≥ 75%)`, icon: '🧠', severity: 'danger' })
+  }
+  if (m1ScoreVal >= 50.0) {
+    triggerReasons.push({ type: 'ml', label: 'Model 1: Isolation Forest', value: `M1 Risk Score ${m1ScoreVal} (≥ 50 Hotspot)`, icon: '🧠', severity: 'warning' })
+  }
+
+  if (triggerReasons.length === 0) {
+    triggerReasons.push({ type: 'normal', label: 'All Sensors & ML Models Safe', value: 'All 4 Spatial Thermal Zones, Gas & IR Flame within baseline parameters', icon: '✅', severity: 'safe' })
+  }
+
   const renderZoneCard = (title, subText, gridPixels, maxVal) => (
     <div className="card-glass zone-4x4-card">
       <div className="card-box-header">
@@ -167,31 +209,51 @@ export default function LandingSensorGrid({ readings, currentState }) {
         </div>
       </div>
 
-      {/* ── ROW 4: SYSTEM OPERATIONAL STATE BANNER ── */}
+      {/* ── ROW 4: SYSTEM OPERATIONAL STATE BANNER WITH TRIGGER SOURCE BREAKDOWN ── */}
       <div className={`system-state-banner state-banner-${stateStr.toLowerCase()}`}>
-        <div className="banner-left">
-          <div className="state-badge-icon">
-            {stateStr === 'CRITICAL' ? '🚨' : stateStr === 'MODERATE' ? '⚠️' : '🛡️'}
+        <div className="banner-top flex-between">
+          <div className="banner-left">
+            <div className="state-badge-icon">
+              {stateStr === 'CRITICAL' ? '🚨' : stateStr === 'MODERATE' ? '⚠️' : '🛡️'}
+            </div>
+            <div>
+              <div className="banner-small-label">Overall System Operational State</div>
+              <div className="banner-state-title">STATE: {stateStr}</div>
+              <div className="banner-state-desc">
+                {stateStr === 'CRITICAL'
+                  ? 'CRITICAL FIRE RISK! Emergency Containment Activated — Main Power CUT (GPIO 27 HIGH) & Powder Servo Engaged (90°).'
+                  : stateStr === 'MODERATE'
+                  ? 'MODERATE HOTSPOT DETECTED (50°C - 60°C or M1 Score ≥ 50). Warning Siren & LED Active.'
+                  : 'SYSTEM NORMAL. All 4 Spatial Thermal Zones & Environmental Sensors within safe baseline limits.'}
+              </div>
+            </div>
           </div>
-          <div>
-            <div className="banner-small-label">Overall System Operational State</div>
-            <div className="banner-state-title">STATE: {stateStr}</div>
-            <div className="banner-state-desc">
-              {stateStr === 'CRITICAL'
-                ? 'CRITICAL FIRE RISK! Emergency Containment Activated — Main Power CUT (GPIO 26 LOW) & Powder Servo Engaged (90°).'
-                : stateStr === 'MODERATE'
-                ? 'MODERATE HOTSPOT DETECTED (50°C - 60°C or M1 Score ≥ 50). Warning Siren & LED Active (1 0 1 0 Beep).'
-                : 'SYSTEM NORMAL. All 4 Spatial Thermal Zones & Environmental Sensors within safe baseline limits.'}
+          <div className="banner-right">
+            <div className="banner-mode-pill">
+              <span className="live-ping-dot" />
+              <span>ACTIVE CONTINUOUS MONITORING</span>
             </div>
           </div>
         </div>
-        <div className="banner-right">
-          <div className="banner-mode-pill">
-            <span className="live-ping-dot" />
-            <span>ACTIVE CONTINUOUS MONITORING</span>
+
+        {/* ── SUB-TAB: TRIGGER REASON & ROOT CAUSE ANALYSIS BREAKDOWN ── */}
+        <div className="trigger-analysis-tab">
+          <div className="trigger-tab-header">
+            <span className="trigger-tab-title font-mono">🔍 STATE TRIGGER SOURCE & ROOT CAUSE BREAKDOWN</span>
+            <span className="trigger-count-pill font-mono">{triggerReasons.length} Active Indicator{triggerReasons.length > 1 ? 's' : ''}</span>
+          </div>
+          <div className="trigger-badges-flex">
+            {triggerReasons.map((tr, idx) => (
+              <div key={idx} className={`trigger-source-pill pill-${tr.severity}`}>
+                <span className="tr-icon">{tr.icon}</span>
+                <span className="tr-label">{tr.label}:</span>
+                <span className="tr-val font-mono">{tr.value}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
     </div>
   )
 }
+

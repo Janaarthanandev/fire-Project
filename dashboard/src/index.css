@@ -432,12 +432,81 @@ body {
   color: var(--safe-glow);
 }
 
-.live-ping-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--safe-glow);
-  animation: pulse-live 1.5s infinite;
+/* ── TRIGGER SOURCE ANALYSIS TAB IN STATE BANNER ── */
+.trigger-analysis-tab {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.trigger-tab-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.trigger-tab-title {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: var(--text-primary);
+  opacity: 0.85;
+  text-transform: uppercase;
+}
+
+.trigger-count-pill {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: rgba(0, 0, 0, 0.35);
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.trigger-badges-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.trigger-source-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.trigger-source-pill.pill-danger {
+  background: rgba(239, 68, 68, 0.25);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
+}
+
+.trigger-source-pill.pill-warning {
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  color: #fde68a;
+}
+
+.trigger-source-pill.pill-safe {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #34d399;
+}
+
+.tr-label {
+  font-weight: 700;
+}
+
+.tr-val {
+  font-weight: 800;
 }
 
 /* ── ACTUATORS SECTION ──────────────────────────────────────── */
@@ -458,6 +527,16 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.actuator-box:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(15, 23, 42, 0.6);
 }
 
 .actuator-info {
@@ -471,51 +550,50 @@ body {
 }
 
 .actuator-pin {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--text-primary);
+  margin-top: 2px;
 }
 
 .actuator-status-pill {
   font-size: 11px;
   font-weight: 800;
   font-family: var(--font-mono);
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 999px;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .pill-off {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text-muted);
   border: 1px solid var(--border);
 }
 
 .pill-warning {
-  background: var(--moderate-bg);
+  background: rgba(245, 158, 11, 0.15);
   color: #fde68a;
-  border: 1px solid var(--moderate-border);
-  animation: blink-danger 1s infinite;
+  border: 1px solid rgba(245, 158, 11, 0.4);
 }
 
 .pill-danger {
-  background: var(--danger-bg);
+  background: rgba(239, 68, 68, 0.18);
   color: #fca5a5;
-  border: 1px solid var(--danger-border);
-  animation: blink-danger 1s infinite;
+  border: 1px solid rgba(239, 68, 68, 0.4);
 }
 
 .pill-cut {
-  background: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.25);
   color: #fca5a5;
   border: 1px solid #ef4444;
-  animation: blink-danger 0.8s infinite;
 }
 
 .pill-normal {
-  background: var(--safe-bg);
-  color: var(--safe-glow);
-  border: 1px solid var(--safe-border);
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
 }
 
 .pill-fan {
