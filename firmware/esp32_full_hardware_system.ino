@@ -29,7 +29,7 @@ const char* SUPABASE_KEY  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdX
 // Module polarity definitions
 #define RELAY_ON_LEVEL     HIGH  // HIGH = Relay Energized -> COM moves to NO -> Power CUT
 #define RELAY_OFF_LEVEL    LOW   // LOW  = Relay OFF -> COM stays at NC -> Normal Power ON
-#define FLAME_ACTIVE_LEVEL HIGH  // HIGH = Flame Detected
+#define FLAME_ACTIVE_LEVEL LOW   // LOW  = Flame Detected (Standard LM393 Module)
 
 // ---------- THRESHOLDS & TIMERS ----------
 #define TEMP_MODERATE_MIN     50.0f  // 50°C to 60°C = MODERATE state
@@ -265,11 +265,16 @@ void sense() {
     else {
       // ⏱️ 15-SECOND CRITICAL AUTO-RESET LOOP
       if (millis() - criticalStartTime >= CRITICAL_HOLD_MS) {
-        if (maxThermal < TEMP_MODERATE_MIN && !flameDetected && a2 < 2800.0f && a135 < 2000.0f) {
-          currentState = STATE_NORMAL;
+        if (maxThermal < TEMP_CRITICAL_MIN && !flameDetected && a2 < MQ2_CRITICAL_MAX && a135 < MQ135_CRITICAL_MAX) {
+          if (maxThermal >= TEMP_MODERATE_MIN || a2 >= 2500.0f || a135 >= 1500.0f) {
+            currentState = STATE_MODERATE;
+            Serial.println("\n⚠️ [AUTO-RESET] 15s Critical loop completed. Conditions moderate. Transition to MODERATE!");
+          } else {
+            currentState = STATE_NORMAL;
+            Serial.println("\n✅ [AUTO-RESET] 15s Critical loop completed & hazard cleared. Reset to NORMAL!");
+          }
           criticalTriggered = false;
           criticalStreak = 0;
-          Serial.println("\n✅ [AUTO-RESET] 15s Critical loop completed & hazard cleared. Reset to NORMAL!");
         } else {
           criticalStartTime = millis();
           Serial.println("\n⚠️ [CRITICAL HOLD] 15s elapsed but heat/flame/gas still present. Extending CRITICAL!");
@@ -294,7 +299,7 @@ void setup() {
   pinMode(LED_PIN, OUTPUT);
   pinMode(POWER_RELAY_PIN, OUTPUT);
   pinMode(VENT_FAN_PIN, OUTPUT);
-  pinMode(FLAME_PIN, INPUT);
+  pinMode(FLAME_PIN, INPUT_PULLUP);
 
   digitalWrite(BUZZER_PIN, LOW);
   digitalWrite(LED_PIN, LOW);

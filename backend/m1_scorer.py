@@ -77,7 +77,16 @@ def score_zone(features: dict) -> tuple[float, str, float]:
         except Exception as err:
             logger.error(f"Error during M1 inference: {err}")
 
-    # Fallback formula
-    raw_calc = ((max_temp - 30.0) * 2.0) + (mq2 / 20.0) + (abs(temp_diff) * 1.5)
+    # Fallback formula aligned with MQ-2 (2200-2800 PPM normal) & MQ-135 (800-1200 PPM normal)
+    if max_temp >= 60.0 or mq2 >= 2800 or mq135 >= 2000:
+        raw_calc = 84.0 + (max_temp - 60.0) * 0.4 + max(0, mq2 - 2800) * 0.02 + max(0, mq135 - 2000) * 0.02
+    elif max_temp >= 45.0 or mq2 >= 2500 or mq135 >= 1500:
+        raw_calc = 50.0 + max(0, max_temp - 45.0) * 1.5 + max(0, mq2 - 2500) * 0.08
+    else:
+        temp_contrib = max(0, (max_temp - 30.0) * 1.5)
+        mq2_contrib = max(0, (mq2 - 2200) * 0.03)
+        mq135_contrib = max(0, (mq135 - 800) * 0.03)
+        raw_calc = 12.0 + temp_contrib + mq2_contrib + mq135_contrib
+
     risk_score = float(np.clip(raw_calc, 0.0, 100.0))
     return round(risk_score, 1), map_risk_tier(risk_score), 0.0

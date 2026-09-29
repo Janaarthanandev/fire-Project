@@ -78,8 +78,8 @@ for i in range(TOTAL_SAMPLES):
     temp_z3 = round(float(temp_inside + np.random.uniform(0.3, 2.2)), 2)
     temp_z4 = round(float(temp_inside + np.random.uniform(0.0, 1.5)), 2)
 
-    mq2_val = round(float(np.random.normal(120, 15)), 2)
-    mq135_val = round(float(np.random.normal(140, 18)), 2)
+    mq2_val = round(float(np.clip(np.random.normal(2450, 120), 2200, 2780)), 2)
+    mq135_val = round(float(np.clip(np.random.normal(950, 70), 800, 1190)), 2)
     flame_val = 0.0
     system_state = "NORMAL"
 
@@ -97,8 +97,8 @@ for i in range(TOTAL_SAMPLES):
     temp_z3 = round(float(temp_inside + np.random.uniform(1.0, 3.5)), 2)
     temp_z4 = round(float(temp_inside + np.random.uniform(0.5, 2.0)), 2)
 
-    mq2_val = round(float(np.random.normal(450, 40)), 2)     # Gas drift
-    mq135_val = round(float(np.random.normal(520, 50)), 2)
+    mq2_val = round(float(np.random.normal(2600, 60)), 2)     # Gas drift
+    mq135_val = round(float(np.random.normal(1600, 80)), 2)
     flame_val = 0.0  # No visible flame yet!
     system_state = "MODERATE"
 
@@ -115,8 +115,8 @@ for i in range(TOTAL_SAMPLES):
     temp_z3 = round(float(np.random.uniform(40.0, 50.0)), 2)
     temp_z4 = round(float(np.random.uniform(35.0, 42.0)), 2)
 
-    mq2_val = round(float(np.random.normal(1200, 150)), 2)
-    mq135_val = round(float(np.random.normal(1400, 180)), 2)
+    mq2_val = round(float(np.random.normal(2950, 100)), 2)
+    mq135_val = round(float(np.random.normal(2150, 120)), 2)
     flame_val = 1.0  # Flame detected!
     system_state = "CRITICAL"
 
@@ -132,8 +132,8 @@ for i in range(TOTAL_SAMPLES):
     temp_z3 = round(float(temp_inside + 0.8), 2)
     temp_z4 = round(float(np.random.uniform(51.0, 56.0)), 2)  # Hotspot in Zone 4 Exit
 
-    mq2_val = round(float(np.random.normal(220, 25)), 2)
-    mq135_val = round(float(np.random.normal(240, 30)), 2)
+    mq2_val = round(float(np.random.normal(2450, 80)), 2)
+    mq135_val = round(float(np.random.normal(950, 60)), 2)
     flame_val = 0.0
     system_state = "MODERATE"
 

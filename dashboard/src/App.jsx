@@ -122,14 +122,19 @@ export default function App() {
   const mq135Val = Number(latestReading.mq135_val ?? 142)
   const flameVal = Number(latestReading.flame_val ?? 0)
 
-  // Use Cloud DB state if available; otherwise fallback to live calculation
+  // Use Cloud DB state if available; fallback to live calculation if sensors are clear
   const cloudState = latestReading.system_state
+  const hasCriticalSensor = (flameVal >= 0.5 || maxThermal >= 60.0 || mq2Val >= 2800 || mq135Val >= 2000)
+  const hasModerateSensor = (maxThermal >= 45.0 || mq2Val >= 2500 || mq135Val >= 1500)
+
   let currentState = 'NORMAL'
-  if (cloudState && ['NORMAL', 'MODERATE', 'CRITICAL'].includes(cloudState)) {
-    currentState = cloudState
-  } else if (flameVal >= 0.5 || maxThermal >= 60.0 || mq2Val >= 2800 || mq135Val >= 2000) {
+  if (hasCriticalSensor) {
     currentState = 'CRITICAL'
-  } else if (maxThermal >= 45.0 || mq2Val >= 2500 || mq135Val >= 1500) {
+  } else if (cloudState === 'CRITICAL' && !hasCriticalSensor && !hasModerateSensor) {
+    currentState = 'NORMAL' // Auto-reset when sensors return to baseline
+  } else if (cloudState && ['NORMAL', 'MODERATE', 'CRITICAL'].includes(cloudState)) {
+    currentState = cloudState
+  } else if (hasModerateSensor) {
     currentState = 'MODERATE'
   } else {
     currentState = 'NORMAL'
