@@ -1,4 +1,5 @@
 import React from 'react'
+import { computeSharedMlScores } from './MlInferencePanel'
 
 // Dynamic autoscaled color mapping for 4x4 micro-grid pixels
 function subGridColor(val, minV = 28.0, maxV = 36.0) {
@@ -90,17 +91,18 @@ export default function LandingSensorGrid({ readings, currentState }) {
   } else if (maxThermal >= 45.0) {
     triggerReasons.push({ type: 'sensor', label: `Thermal Array (${maxZoneName})`, value: `${maxThermal.toFixed(1)}°C (Elevated Heat)`, icon: '🌡️', severity: 'warning' })
   }
-  if (mq2 >= 500) {
-    triggerReasons.push({ type: 'sensor', label: 'Combustible Gas (MQ-2)', value: `${mq2} PPM (Severe Gas Leak)`, icon: '💨', severity: 'danger' })
-  } else if (mq2 >= 300) {
+  if (mq2 >= 2800) {
+    triggerReasons.push({ type: 'sensor', label: 'Combustible Gas (MQ-2)', value: `${mq2} PPM (≥ 2800 PPM Critical Trigger)`, icon: '💨', severity: 'danger' })
+  } else if (mq2 >= 2500) {
     triggerReasons.push({ type: 'sensor', label: 'Combustible Gas (MQ-2)', value: `${mq2} PPM (Elevated Gas)`, icon: '💨', severity: 'warning' })
   }
-  if (mq135 >= 350) {
-    triggerReasons.push({ type: 'sensor', label: 'Air Quality (MQ-135)', value: `${mq135} PPM (Toxic Smoke Drift)`, icon: '☁️', severity: 'warning' })
+  if (mq135 >= 2000) {
+    triggerReasons.push({ type: 'sensor', label: 'Air Quality (MQ-135)', value: `${mq135} PPM (≥ 2000 PPM Toxic Smoke Trigger)`, icon: '☁️', severity: 'danger' })
+  } else if (mq135 >= 1500) {
+    triggerReasons.push({ type: 'sensor', label: 'Air Quality (MQ-135)', value: `${mq135} PPM (Elevated Smoke Drift)`, icon: '☁️', severity: 'warning' })
   }
 
-  const m1ScoreVal = Number(readings?.m1_risk_score ?? ((maxThermal >= 45 || mq2 >= 300) ? 68 : (maxThermal >= 60 || flameDetected) ? 92 : 18))
-  const m2ConfVal = Number(readings?.m2_confidence ?? ((maxThermal >= 60 || flameDetected) ? 98.6 : (maxThermal >= 45) ? 42.1 : 4.5))
+  const { m1Score: m1ScoreVal, m2Confidence: m2ConfVal } = computeSharedMlScores(readings)
 
   if (m2ConfVal >= 75.0) {
     triggerReasons.push({ type: 'ml', label: 'Model 2: Random Forest', value: `Fire Confidence ${m2ConfVal.toFixed(1)}% (≥ 75%)`, icon: '🧠', severity: 'danger' })

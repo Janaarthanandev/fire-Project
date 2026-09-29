@@ -127,9 +127,9 @@ export default function App() {
   let currentState = 'NORMAL'
   if (cloudState && ['NORMAL', 'MODERATE', 'CRITICAL'].includes(cloudState)) {
     currentState = cloudState
-  } else if (flameVal >= 0.5 || maxThermal >= 60.0 || mq2Val >= 500) {
+  } else if (flameVal >= 0.5 || maxThermal >= 60.0 || mq2Val >= 2800 || mq135Val >= 2000) {
     currentState = 'CRITICAL'
-  } else if (maxThermal >= 45.0 || mq2Val >= 300 || mq135Val >= 250) {
+  } else if (maxThermal >= 45.0 || mq2Val >= 2500 || mq135Val >= 1500) {
     currentState = 'MODERATE'
   } else {
     currentState = 'NORMAL'

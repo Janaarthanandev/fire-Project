@@ -34,8 +34,8 @@ const char* SUPABASE_KEY  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdX
 // ---------- THRESHOLDS & TIMERS ----------
 #define TEMP_MODERATE_MIN     50.0f  // 50°C to 60°C = MODERATE state
 #define TEMP_CRITICAL_MIN     60.0f  // > 60°C = CRITICAL state
-#define MQ2_CRITICAL_MAX      400.0f // MQ-2 Gas PPM > 400 = CRITICAL state
-#define MQ135_CRITICAL_MAX    350.0f // MQ-135 Gas PPM > 350 = CRITICAL state
+#define MQ2_CRITICAL_MAX      2800.0f // MQ-2 Gas PPM >= 2800 = CRITICAL state
+#define MQ135_CRITICAL_MAX    2000.0f // MQ-135 Gas PPM >= 2000 = CRITICAL state
 #define CRITICAL_HOLD_MS      15000  // 15 Seconds Critical Hold duration
 #define SAMPLE_MS             1000   // Sensor sampling interval (1 sec)
 #define BEEP_INTERVAL_MS      200    // Fast 200ms ON / 200ms OFF beep & blink loop (1 0 1 0 pattern)
@@ -252,7 +252,7 @@ void sense() {
                         maxThermal, flameDetected, a2, a135);
         }
       }
-      else if (maxThermal >= TEMP_MODERATE_MIN || a2 >= 250.0f || a135 >= 200.0f) {
+      else if (maxThermal >= TEMP_MODERATE_MIN || a2 >= 2500.0f || a135 >= 1500.0f) {
         currentState = STATE_MODERATE;
         criticalStreak = 0;
         Serial.println("\n⚠️ [HOTSPOT/GAS DRIFT] Moderate conditions detected.");
@@ -265,7 +265,7 @@ void sense() {
     else {
       // ⏱️ 15-SECOND CRITICAL AUTO-RESET LOOP
       if (millis() - criticalStartTime >= CRITICAL_HOLD_MS) {
-        if (maxThermal < TEMP_MODERATE_MIN && !flameDetected && a2 < 250.0f && a135 < 200.0f) {
+        if (maxThermal < TEMP_MODERATE_MIN && !flameDetected && a2 < 2800.0f && a135 < 2000.0f) {
           currentState = STATE_NORMAL;
           criticalTriggered = false;
           criticalStreak = 0;

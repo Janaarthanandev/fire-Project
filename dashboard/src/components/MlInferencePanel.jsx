@@ -1,6 +1,4 @@
-import React from 'react'
-
-export default function MlInferencePanel({ readings, currentState }) {
+export function computeSharedMlScores(readings) {
   const z1 = Number(readings?.temp_z1 ?? 31.2)
   const z2 = Number(readings?.temp_z2 ?? 32.5)
   const z3 = Number(readings?.temp_z3 ?? 30.8)
@@ -28,13 +26,13 @@ export default function MlInferencePanel({ readings, currentState }) {
   let m1Score = 14
   if (cloudM1Score !== undefined && cloudM1Score !== null && !isNaN(Number(cloudM1Score))) {
     m1Score = Math.round(Number(cloudM1Score))
-  } else if (flameDetected || maxTemp >= 60.0 || mq2 >= 500) {
-    m1Score = Math.min(98, Math.round(84 + (maxTemp - 60.0) * 0.4 + (mq2 - 500) * 0.02 + (flameDetected ? 8 : 0)))
-  } else if (maxTemp >= 45.0 || mq2 >= 300) {
-    m1Score = Math.min(74, Math.round(50 + (maxTemp - 45.0) * 1.5 + (mq2 - 300) * 0.08))
+  } else if (flameDetected || maxTemp >= 60.0 || mq2 >= 2800 || mq135 >= 2000) {
+    m1Score = Math.min(98, Math.round(84 + (maxTemp - 60.0) * 0.4 + (mq2 - 2800) * 0.02 + (flameDetected ? 8 : 0)))
+  } else if (maxTemp >= 45.0 || mq2 >= 2500 || mq135 >= 1500) {
+    m1Score = Math.min(74, Math.round(50 + (maxTemp - 45.0) * 1.5 + (mq2 - 2500) * 0.08))
   } else {
     const tempContrib = Math.max(0, (maxTemp - 30.0) * 1.5)
-    const gasContrib = Math.max(0, (mq2 - 150) * 0.04)
+    const gasContrib = Math.max(0, (mq2 - 2200) * 0.03)
     m1Score = Math.min(42, Math.round(12 + tempContrib + gasContrib))
   }
   m1Score = Math.max(0, Math.min(100, m1Score))
@@ -50,16 +48,30 @@ export default function MlInferencePanel({ readings, currentState }) {
   let m2Confidence = 3.5
   if (cloudM2Conf !== undefined && cloudM2Conf !== null && !isNaN(Number(cloudM2Conf))) {
     m2Confidence = Number(Number(cloudM2Conf).toFixed(1))
-  } else if (flameDetected || (maxTemp >= 60.0 && mq2 >= 400)) {
+  } else if (flameDetected || (maxTemp >= 60.0 && mq2 >= 2800)) {
     m2Confidence = Math.min(99.4, Number((92.0 + (maxTemp - 60.0) * 0.3 + (flameDetected ? 5.0 : 0)).toFixed(1)))
-  } else if (maxTemp >= 48.0 || mq2 >= 350) {
+  } else if (maxTemp >= 48.0 || mq2 >= 2500 || mq135 >= 1500) {
     m2Confidence = Math.min(74.0, Number((42.0 + (maxTemp - 48.0) * 2.0).toFixed(1)))
   } else if (m1Score >= 50) {
     m2Confidence = Math.min(48.0, Number((22.0 + (m1Score - 50.0) * 0.8).toFixed(1)))
   } else {
-    m2Confidence = Math.min(12.0, Number((2.5 + (maxTemp - 30.0) * 0.3 + (mq2 - 150) * 0.02).toFixed(1)))
+    m2Confidence = Math.min(12.0, Number((2.5 + (maxTemp - 30.0) * 0.3 + (mq2 - 2200) * 0.01).toFixed(1)))
   }
   m2Confidence = Math.max(0.0, Math.min(100.0, m2Confidence))
+
+  return {
+    z1, z2, z3, z4, maxTemp, tIn, tOut, hIn, hOut,
+    tempDiff, humDiff, mq2, mq135, flameVal, flameDetected,
+    m1Score, m1AnomalyRaw, m2Confidence
+  }
+}
+
+export default function MlInferencePanel({ readings, currentState }) {
+  const {
+    z1, z2, z3, z4, maxTemp, tIn, tOut, hIn, hOut,
+    tempDiff, humDiff, mq2, mq135, flameVal, flameDetected,
+    m1Score, m1AnomalyRaw, m2Confidence
+  } = computeSharedMlScores(readings)
 
   return (
     <div className="ml-inference-section-wrapper">
