@@ -29,25 +29,35 @@ export default function App() {
         .from('sensor_readings')
         .select('*')
         .order('created_at', { ascending: false })
+        .order('id', { ascending: false })
         .limit(50)
 
       const { data: riskData } = await supabase
         .from('risk_scores')
         .select('*')
         .order('created_at', { ascending: false })
+        .order('id', { ascending: false })
         .limit(1)
 
       const { data: fireData } = await supabase
         .from('fire_events')
         .select('*')
         .order('created_at', { ascending: false })
+        .order('id', { ascending: false })
         .limit(1)
 
       if (readingsData && readingsData.length > 0) {
+        // Guarantee strict timestamp-based descending order (latest created_at at index 0)
+        const sortedReadings = [...readingsData].sort((a, b) => {
+          const tA = a.created_at ? new Date(a.created_at).getTime() : (a.id || 0)
+          const tB = b.created_at ? new Date(b.created_at).getTime() : (b.id || 0)
+          return tB - tA
+        })
+
         const latestRisk = riskData && riskData[0] ? riskData[0] : null
         const latestFire = fireData && fireData[0] ? fireData[0] : null
 
-        const mergedHistory = readingsData.map((row, idx) => {
+        const mergedHistory = sortedReadings.map((row, idx) => {
           if (idx === 0) {
             return {
               ...row,
@@ -79,7 +89,15 @@ export default function App() {
         { event: 'INSERT', schema: 'public', table: 'sensor_readings' },
         (payload) => {
           if (payload.new) {
-            setLiveHistory(prev => [payload.new, ...prev].slice(0, 50))
+            setLiveHistory(prev => {
+              const combined = [payload.new, ...prev]
+              combined.sort((a, b) => {
+                const tA = a.created_at ? new Date(a.created_at).getTime() : (a.id || 0)
+                const tB = b.created_at ? new Date(b.created_at).getTime() : (b.id || 0)
+                return tB - tA
+              })
+              return combined.slice(0, 50)
+            })
             setConnected(true)
             fetchCloudHistory()
           }
