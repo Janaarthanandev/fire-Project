@@ -61,8 +61,8 @@ export default function LandingSensorGrid({ readings, currentState }) {
   const z3Max = (readings?.temp_z3 ?? Math.max(...z3Grid)).toFixed(1)
   const z4Max = (readings?.temp_z4 ?? Math.max(...z4Grid)).toFixed(1)
 
-  const mq2 = Math.round(readings?.mq2_val ?? 185)
-  const mq135 = Math.round(readings?.mq135_val ?? 142)
+  const mq2 = Math.round(readings?.mq2_val ?? 2450)
+  const mq135 = Math.round(readings?.mq135_val ?? 950)
   const flameDetected = (readings?.flame_val ?? 0) > 0.5
 
   const tIn = (readings?.temp_inside ?? 32.4).toFixed(1)

@@ -57,8 +57,8 @@ def score_zone(features: dict) -> tuple[float, str, float]:
     max_temp = features.get("max_temp", 30.0)
     temp_diff = features.get("temp_diff", 0.0)
     humidity_diff = features.get("humidity_diff", 0.0)
-    mq2 = features.get("mq2_val", 100.0)
-    mq135 = features.get("mq135_val", 120.0)
+    mq2 = features.get("mq2_val", 2450.0)
+    mq135 = features.get("mq135_val", 950.0)
 
     if _model is not None and _scaler is not None:
         try:

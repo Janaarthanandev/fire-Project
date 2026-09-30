@@ -19,8 +19,8 @@ export default function RealtimeGraphsView({ liveHistory = [] }) {
           tOut: Number((row.temp_outside ?? 34.1).toFixed(1)),
           hIn: Number((row.humidity_inside ?? 48.0).toFixed(1)),
           hOut: Number((row.humidity_outside ?? 42.0).toFixed(1)),
-          mq2: Math.round(row.mq2_val ?? 185),
-          mq135: Math.round(row.mq135_val ?? 142),
+          mq2: Math.round(row.mq2_val ?? 2450),
+          mq135: Math.round(row.mq135_val ?? 950),
           flame: (row.flame_val ?? 0) > 0.5 ? 1 : 0
         }
       })
@@ -134,7 +134,7 @@ function generateFallbackGraphData() {
       time: t,
       z1: 31.5, z2: 32.0, z3: 31.8, z4: 30.5,
       tIn: 32.3, tOut: 34.0, hIn: 48.0, hOut: 42.0,
-      mq2: 180, mq135: 140, flame: 0
+      mq2: 2450, mq135: 950, flame: 0
     })
   }
   return pts

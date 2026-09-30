@@ -58,7 +58,7 @@ async def process_sensor_row(row: dict) -> Dict[str, Any]:
 
     features = extract_m1_features(row)
     if features is None:
-        features = {"max_temp": max_temp, "temp_diff": 0.0, "humidity_diff": 0.0, "mq2_val": 100.0, "mq135_val": 120.0}
+        features = {"max_temp": max_temp, "temp_diff": 0.0, "humidity_diff": 0.0, "mq2_val": 2450.0, "mq135_val": 950.0}
 
     # Step 1: Model 1 Isolation Forest Anomaly Scoring
     risk_score, risk_tier, anomaly_score_raw = score_zone(features)

@@ -105,8 +105,8 @@ export default function App() {
     humidity_inside: 48.0,
     temp_outside: 34.1,
     humidity_outside: 42.0,
-    mq2_val: 185,
-    mq135_val: 142,
+    mq2_val: 2450,
+    mq135_val: 950,
     flame_val: 0,
     fan_status: false,
     system_state: 'NORMAL'
@@ -118,8 +118,8 @@ export default function App() {
   const z3 = Number(latestReading.temp_z3 ?? 30.8)
   const z4 = Number(latestReading.temp_z4 ?? 29.9)
   const maxThermal = Math.max(z1, z2, z3, z4)
-  const mq2Val = Number(latestReading.mq2_val ?? 185)
-  const mq135Val = Number(latestReading.mq135_val ?? 142)
+  const mq2Val = Number(latestReading.mq2_val ?? 2450)
+  const mq135Val = Number(latestReading.mq135_val ?? 950)
   const flameVal = Number(latestReading.flame_val ?? 0)
 
   // Use Cloud DB state if available; fallback to live calculation if sensors are clear

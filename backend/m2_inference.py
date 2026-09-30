@@ -68,8 +68,8 @@ def run_m2_inference(event_data: Dict[str, Any], m1_risk_score: float = 15.0) ->
     temp_out = float(event_data.get("temp_outside", 30.0))
     temp_diff = temp_in - temp_out
 
-    mq2 = float(event_data.get("mq2_val", 100.0))
-    mq135 = float(event_data.get("mq135_val", 120.0))
+    mq2 = float(event_data.get("mq2_val", 2450.0))
+    mq135 = float(event_data.get("mq135_val", 950.0))
     flame = float(event_data.get("flame_val", 0.0))
 
     # Determine fire zone origin (highest temp zone)

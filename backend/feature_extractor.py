@@ -47,8 +47,8 @@ def extract_m1_features(row: dict) -> dict | None:
     hum_out = float(row.get("humidity_outside") if row.get("humidity_outside") is not None else 50.0)
     humidity_diff = hum_in - hum_out
 
-    mq2 = float(row.get("mq2_val") if row.get("mq2_val") is not None else row.get("gas_level", 100.0))
-    mq135 = float(row.get("mq135_val") if row.get("mq135_val") is not None else row.get("gas_level", 120.0))
+    mq2 = float(row.get("mq2_val") if row.get("mq2_val") is not None else row.get("gas_level", 2450.0))
+    mq135 = float(row.get("mq135_val") if row.get("mq135_val") is not None else row.get("gas_level", 950.0))
 
     return {
         "max_temp": max_temp,

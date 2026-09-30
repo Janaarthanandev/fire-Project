@@ -49,8 +49,8 @@ def engineer_m1_features(df: pd.DataFrame) -> pd.DataFrame:
     hum_out = df.get("humidity_outside", 50.0)
     humidity_diff = hum_in - hum_out
 
-    mq2 = df.get("mq2_val", 100.0)
-    mq135 = df.get("mq135_val", 120.0)
+    mq2 = df.get("mq2_val", 2450.0)
+    mq135 = df.get("mq135_val", 950.0)
 
     features_df = pd.DataFrame({
         "max_temp": max_temp,

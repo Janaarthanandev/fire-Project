@@ -12,8 +12,8 @@ export function computeSharedMlScores(readings) {
 
   const tempDiff = Math.abs(tIn - tOut)
   const humDiff = Math.abs(hIn - hOut)
-  const mq2 = Number(readings?.mq2_val ?? 185)
-  const mq135 = Number(readings?.mq135_val ?? 142)
+  const mq2 = Number(readings?.mq2_val ?? 2450)
+  const mq135 = Number(readings?.mq135_val ?? 950)
   const flameVal = Number(readings?.flame_val ?? 0)
   const flameDetected = flameVal > 0.5
 

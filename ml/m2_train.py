@@ -47,8 +47,8 @@ def engineer_m2_features(df: pd.DataFrame, m1_scores: np.ndarray) -> pd.DataFram
         "temp_z3": df.get("temp_z3", 30.0),
         "temp_z4": df.get("temp_z4", 30.0),
         "temp_diff": temp_diff,
-        "mq2_val": df.get("mq2_val", 100.0),
-        "mq135_val": df.get("mq135_val", 120.0),
+        "mq2_val": df.get("mq2_val", 2450.0),
+        "mq135_val": df.get("mq135_val", 950.0),
         "flame_val": df.get("flame_val", 0.0),
         "m1_risk_score": m1_scores
     })
@@ -96,8 +96,8 @@ def main():
         "max_temp": max_temp,
         "temp_diff": df.get("temp_inside", 30.0) - df.get("temp_outside", 30.0),
         "humidity_diff": df.get("humidity_inside", 50.0) - df.get("humidity_outside", 50.0),
-        "mq2_val": df.get("mq2_val", 100.0),
-        "mq135_val": df.get("mq135_val", 120.0)
+        "mq2_val": df.get("mq2_val", 2450.0),
+        "mq135_val": df.get("mq135_val", 950.0)
     })
     m1_scaled = m1_scaler.transform(m1_raw)
     m1_raw_scores = m1_model.decision_function(m1_scaled)

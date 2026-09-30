@@ -77,8 +77,8 @@ export default function RecentCloudLogsTable({ simulatedReadings }) {
                 <td className="td-cell val-bold">{(row.temp_z4 ?? 29.9).toFixed(1)}</td>
                 <td className="td-cell">{(row.temp_inside ?? 32.4).toFixed(1)}</td>
                 <td className="td-cell">{(row.temp_outside ?? 34.1).toFixed(1)}</td>
-                <td className="td-cell">{Math.round(row.mq2_val ?? 185)}</td>
-                <td className="td-cell">{Math.round(row.mq135_val ?? 142)}</td>
+                <td className="td-cell">{Math.round(row.mq2_val ?? 2450)}</td>
+                <td className="td-cell">{Math.round(row.mq135_val ?? 950)}</td>
                 <td className="td-cell">
                   {(row.flame_val ?? 0) > 0.5 ? (
                     <span className="badge-flame-detected">DETECTED</span>
@@ -110,7 +110,7 @@ export default function RecentCloudLogsTable({ simulatedReadings }) {
 function generateMockLogs(simulatedReadings) {
   const base = simulatedReadings || {
     temp_z1: 31.2, temp_z2: 32.5, temp_z3: 30.8, temp_z4: 29.9,
-    temp_inside: 32.4, temp_outside: 34.1, mq2_val: 185, mq135_val: 142,
+    temp_inside: 32.4, temp_outside: 34.1, mq2_val: 2450, mq135_val: 950,
     flame_val: 0, fan_status: false, system_state: 'NORMAL'
   }
 
