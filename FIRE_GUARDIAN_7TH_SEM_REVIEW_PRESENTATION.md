@@ -388,7 +388,7 @@ Inside Temp (DHT22)     | 25.0°C – 35.0°C     | > 35.0°C          | N/A    
 SOFTWARE REQUIREMENTS:
 • Programming Languages : Python 3.11, C++ (Arduino ESP32 Core), JavaScript (React 18 JSX)
 • Machine Learning      : Scikit-Learn, Pandas, NumPy, Joblib
-• Backend Framework     : FastAPI, Uvicorn, Asyncio, PyPika
+• Backend Framework     : FastAPI, Uvicorn, Asyncio, Supabase-Py Client
 • Cloud Database        : Supabase Real-Time PostgreSQL
 • Web Frontend          : React 18, Vite, Lucide-React, Recharts, Vanilla CSS3
 • IDE & Embedded Tools  : Visual Studio Code, Antigravity IDE, Arduino IDE 2.3
