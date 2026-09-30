@@ -1,0 +1,369 @@
+Total slides found: 20
+
+=== SLIDE 1 ===
+By
+         ANISH V S	            			111623104007
+         SRI PRASANNA PRIYAA M	            	111623104095
+SUPERVISOR
+Ms. C.NITHIYA 
+ASSISTANT PROFESSOR
+{93296810-A885-4BE3-A3E7-6D5BEEA58F35}
+R.M.K. COLLEGE OF
+ENGINEERING AND TECHNOLOGY
+ DEPARTMENT OF ELECTRONICS AND COMMUNICATION
+ ENGINEERING
+B.E
+ – PROJECT REVIEW- DATE: 30/09/2026
+TITLE:
+DESIGN AND IMPLEMENTATION OF OPTIMIZED RISC V PROCESSOR USING CUSTOM MAC INSTRUCTION
+
+=== SLIDE 2 ===
+CONTENTS
+Objectives
+Introduction
+Literature Review
+Problem Statement
+Proposed Work
+Simulation Tool
+Work Plan
+Conclusion
+Reference
+30/09/2026
+2
+style.visibility
+style.visibility
+style.visibility
+style.visibility
+style.visibility
+style.visibility
+style.visibility
+style.visibility
+style.visibility
+style.visibility
+
+=== SLIDE 3 ===
+OBJECTIVES
+30/09/2026
+3
+To study the 
+RISC-V ISA and processor architecture
+, with emphasis on RV32-based embedded processors.
+To analyze the performance bottlenecks associated with repetitive 
+Multiply-Accumulate (MAC)
+ operations. 
+To design and integrate an 
+application-specific custom MAC instruction
+ into a RISC-V processor. 
+To develop a dedicated 
+hardware MAC unit
+ for accelerating compute-intensive operations.  
+style.visibility
+
+=== SLIDE 4 ===
+INTRODUCTION
+RISC-V
+ is an open and modular Instruction Set Architecture (ISA) that supports application-specific instruction extensions. 
+The flexibility of RISC-V enables the integration of 
+custom instructions and dedicated hardware accelerators
+ to improve processor performance. 
+Multiply-Accumulate (MAC)
+ is a fundamental operation in DSP and compute-intensive applications such as 
+FIR filtering, dot-product computation and matrix operations
+. 
+Conventional execution of MAC operations requires multiple instructions, resulting in increased 
+instruction count, execution cycles and processing time
+. 
+A 
+custom MAC instruction
+ can combine multiplication and accumulation into a single application-specific operation, reducing computational overhead. 
+This project proposes the design and FPGA implementation of a 
+performance-optimized RISC-V processor with a custom MAC instruction
+. 
+The proposed processor will be implemented and evaluated on the 
+Xilinx PYNQ-Z2 FPGA
+ using 
+Vivado
+. 
+Core Concept:
+RISC-V Processor → Custom MAC Instruction → Hardware MAC Unit → PYNQ-Z2 → Performance Evaluation
+30/09/2026
+4
+MAC=(A×B)+C
+
+=== SLIDE 5 ===
+LITERATURE REVIEW
+9/29/2026
+5
+{775DCB02-9BB8-47FD-8907-85C794F793BA}
+S.No
+Year
+Author
+Title
+Name of Journal
+Performance metrics
+1
+2026
+S.Hemajothi
+, 
+S.Jalaja
+, 
+M.Kishore
+, 
+S.Gowtham
+ Kumar
+Design and Implementation of a Custom-MAC Instruction in Open-Source RISC-V Processor Core
+IEEE ICCPCT 2026
+Custom MAC in PicoRV32 using PCPI; 2× speedup, ~3–5% area overhead, ~100 MHz FPGA, power not reported
+2
+2024
+S. Wang, X. Ding, Y. Yang
+Tracking Accelerator Based on RISC-V Custom Instructions for GNSS Receiver
+IEICE Electronics Express
+58–94% speed increase for tracking loops; 122–700% speed increase for custom instructions; 33.1% area and 19.8% power increase
+3
+2026
+I. Ahmad, H. Cheng, J. 
+Groszschaedl
+, D. Page
+Extending RISC-V to Support Flexible-Radix Multiply-Accumulate Operations
+IACR Communications in Cryptology
+Up to 1.5×/1.6× improvement on RV32I; up to 1.3×/1.7× on RV64I for evaluated workloads
+4
+2025
+M. Sabih et al.
+Hardware/
+SoftwareDesign
+ of RISC-V for Accelerating Sparse DNNs in FPGAs
+FPGA / RISC-V research
+Up to 3×, 4× and 5× speedups for different sparse-DNN configurations
+
+=== SLIDE 6 ===
+PROBLEM STATEMENT
+30/09/2026
+6
+To design and implement a custom MAC instruction in a RISC-V processor to reduce the execution overhead of MAC-intensive workloads and evaluate its performance, timing, FPGA resource utilization and power consumption on the PYNQ-Z2 platform.
+MAC operations
+ are frequently used in computationally intensive applications such as 
+FIR filtering, dot-product and matrix operations
+. 
+In a conventional RISC-V processor, a MAC operation requires multiple arithmetic instructions, increasing the 
+instruction count and execution cycles
+. 
+Repeated execution of these operations can lead to increased 
+execution time and computational overhead
+. 
+Although RISC-V supports custom instruction extensions, designing an application-specific instruction requires careful consideration of the 
+processor 
+datapath
+, FPGA resources and performance benefits
+. 
+Therefore, there is a need for a 
+lightweight custom MAC instruction
+ that can accelerate MAC-intensive workloads while maintaining reasonable FPGA resource utilization. 
+Existing accelerator-based approaches are often designed for specific applications and may introduce additional 
+hardware resource and power overhead
+. 
+
+=== SLIDE 7 ===
+30/09/2026
+7
+Custom MAC Instruction for RISC-V:
+A single-cycle Multiply-Accumulate extension that halves instruction count, doubles throughput, and cuts energy per operation in half — all within a lean FPGA footprint.
+
+=== SLIDE 8 ===
+PROPOSED WORK
+30/09/2026
+8
+Block Diagram: 
+MAC Operation:
+Custom MAC Instruction
+Rd​=(Rs1​×Rs2​)+Rd​
+
+=== SLIDE 9 ===
+30/09/2026
+9
+
+=== SLIDE 10 ===
+30/09/2026
+10
+
+=== SLIDE 11 ===
+30/09/2026
+11
+Summary of Power Report
+Utilization Report 
+Schematic
+
+=== SLIDE 12 ===
+30/09/2026
+12
+
+=== SLIDE 13 ===
+30/09/2026
+13
+
+=== SLIDE 14 ===
+30/09/2026
+14
+ Graphical Representation of 
+Resourse
+ Utilization
+Speedup energy efficiency comparison graph
+
+=== SLIDE 15 ===
+SIMULATION TOOL/ EQUIPMENTS/ COMPONENTS
+30/09/2026
+15
+{5C22544A-7EE6-4342-B048-85BDC9FD1C3A}
+Tool
+Purpose
+Xilinx 
+Vivado
+RTL synthesis, implementation, timing analysis and FPGA resource utilization
+Vivado
+ Simulator
+Functional and RTL simulation of the RISC-V processor and custom MAC unit
+Verilog / 
+SystemVerilog
+Design of RISC-V processor, instruction decoder and MAC hardware
+RISC-V GCC Toolchain
+Compilation of C programs and generation of RISC-V machine code
+C / RISC-V Assembly
+Development of MAC-intensive benchmark programs
+GTKWave
+Visualization and analysis of simulation waveforms
+SOFTWARE REQUIREMENTS:
+HARDWARE REQUIREMENTS: 
+PYNQ-Z2 FPGA Development Board
+Parameters to be Evaluated:
+Power | Area | Speed
+
+=== SLIDE 16 ===
+WORK PLAN
+Activity/Time Period
+September
+October - November
+December
+January
+February(1-15)
+February(16-28)
+March
+Literature Survey and Analysis
+RISC-V ISA and Processor architectures study
+Toolchain, PYNQ-Z2 and 
+Vivado
+ Setup
+Baseline RISC-V, Custom MAC Design and Integration
+FPGA Implementation and Performance Evaluation
+Preparation and Submission
+of the final report
+30/09/2026
+16
+
+=== SLIDE 17 ===
+CONCLUSION
+30/09/2026
+17
+RISC-V
+ provides a flexible and open ISA that enables the development of 
+application-specific custom instructions
+. 
+MAC operations are widely used in 
+DSP and compute-intensive workloads
+, making them suitable for hardware acceleration. 
+The proposed work aims to integrate a 
+custom MAC instruction and dedicated MAC hardware unit
+ into a RISC-V processor. 
+The optimized processor will be 
+designed, simulated and synthesized using Xilinx 
+Vivado
+. 
+The complete design will be implemented and validated on the 
+PYNQ-Z2 FPGA platform
+. 
+
+=== SLIDE 18 ===
+REFERENCES
+[1] "A RISC-V processor with custom instructions for spiking neural network acceleration," in Proc. IEEE Int. Circuits, 10.1109/ICTA64028.2024.10860426. Technologies and Applications (ICTA), 2024, 
+doi
+: 10.1109/ICTA64028.2024.10860426.
+[2] A. Garofalo, M. 
+Rusci
+, F. Conti, D. Rossi, and L. Benini, "PULP-NN: A computing library for quantized neural network inference at the edge on RISC-V based parallel ultra low-power clusters," in Proc. IEEE Int. Conf. Electron. Circuits Syst. (ICECS), 2019, pp. 33–36, 
+doi
+: 10.1109/ICECS46596.2019.8965067.
+[3] A. Garofalo, M. 
+Rusci
+, F. Conti, D. Rossi, and L. Benini, "PULP-NN: Accelerating quantized neural networks on parallel ultra-low-power RISC-V processors," Philos. Trans. Roy. Soc. A, vol. 378, no.2164, Art. no. 20190155, 2020, 
+doi
+: 10.1098/rsta.2019.0155.
+[4] A. Kumar, V. Kumar, and D. John, "Implementation and analysis of custom instructions on RISC-V for Edge-AI applications," in Proc. 14th Int. Symp. Highly Efficient Accelerators Reconfigurable Technol. (HEART), 2024, pp. 126–129, 
+doi
+: 10.1145/3665283.3665342.
+[5] A. Waterman, Y. Lee, D. A. Patterson, and K. 
+Asanović
+, "The RISC-V instruction set manual, Volume I: User-level ISA," Univ. California, Berkeley, Berkeley, CA, USA, Tech. Rep., 2014. 
+[6] A. Waterman, Y. Lee, R. 
+Avizienis
+, D. A. Patterson, and K. 
+Asanović
+, "The RISC-V instruction set manual, Volume II: Privileged architecture," Univ. California, Berkeley, Berkeley, CA, USA, Tech. Rep., 2016. VLSI Design.
+[7] "An FPGA-based secure and privacy-aware RISC-V SoC with a CNN accelerator for edge AI," in Proc. IEEE and 10.1109/VLSID68508.2026.00016. Embedded Systems-related Conference, 2026 
+30/09/2026
+18
+
+=== SLIDE 19 ===
+30/09/2026
+19
+[8] C. Celio, P.-F. Chiu, B. Nikolić, D. A. Patterson, and K. 
+Asanović
+, "BOOM v2: An open source 
+out-of
+ order RISC-V core," Univ. California, Berkeley, Berkeley, CA, USA, Tech. Rep. UCB/EECS-2017-157, Sep. 2017. 
+[9] "Configurable hardware acceleration for hyperdimensional computing extension on RISC-V," IEEE Trans. 
+Comput
+., 2025, 
+doi
+: 10.1109/TC.2025.3642250.
+[10] E. Cui, T. Li, and Q. Wei, "RISC-V instruction set architecture extensions: A survey," IEEE Access, vol. 11, pp. 24696–24711, 2023, 
+doi
+: 10.1109/ACCESS.2023.3246491.
+[11] "Exploring variable latency dividers in vector hardware accelerators," in Proc. 19th Conf. 
+Ph.D
+ Research Microelectronics and Electronics (PRIME), 2024, 
+doi
+: 10.1109/PRIME61930.2024.10559734.
+[12] F. Bruschi, A. Garofalo, F. Conti, G. 
+Tagliavini
+, and D. Rossi, "Enabling mixed precision quantized neural networks in extreme-edge devices," in Proc. 17th ACM Int. Conf. 
+Comput
+. Frontiers, 2020, pp. 217–220, 
+doi
+: 10.1145/3387902.3394038. 
+[13] F. 
+Schuiki
+, F. Zaruba, T. Hoefler, and L. Benini, "Stream semantic registers: A lightweight RISC-V ISA extension achieving full compute utilization in single-issue cores,"  IEEE Trans. 
+Comput
+., vol. 70, no. 2, pp. 212–227, Feb. 2021, 
+doi
+: 10.1109/TC.2020.2987314.
+[14] F. Zaruba, F. 
+Schuiki
+, and L. Benini, "Manticore: A 4096-core RISC-V 
+chiplet
+ architecture for ultraefficient floating-point computing," IEEE Micro, vol. 41, no. 2, pp. 36 42, Mar./Apr. 2021, 
+doi
+: 10.1109/MM.2020.3045564. 
+[15] F. Zaruba, F. 
+Schuiki
+, T. Hoefler, and L. Benini, "Snitch: A tiny pseudo dual-issue processor for area and energy efficient execution of floating-point intensive workloads," IEEE Trans. 
+Comput
+., vol. 70, no. 11, pp. 1845–1860, Nov. 2021, 
+doi
+: 10.1109/TC.2020.3027900. 
+
+=== SLIDE 20 ===
+THANK YOU
+30/09/2026
+20
+
